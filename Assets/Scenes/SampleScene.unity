@@ -438,9 +438,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbe77e7c2819d714db597cde9fb50447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  HandViewList: []
   kupaGUI: {fileID: 2145559008}
-  playerHand: {fileID: 1149244171}
-  hand: []
 --- !u!114 &1149244171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,9 +656,35 @@ PrefabInstance:
       propertyPath: kupaGUI
       value: 
       objectReference: {fileID: 175660429}
+    - target: {fileID: 4604127009628183113, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+      propertyPath: HandGUIs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604127009628183113, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+      propertyPath: HandGUIs.Array.data[0]
+      value: 
+      objectReference: {fileID: 8062697702144072226}
+    - target: {fileID: 4604127009628183113, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+      propertyPath: HandGUIs.Array.data[1]
+      value: 
+      objectReference: {fileID: 8062697702144072225}
     - target: {fileID: 5156109937610038355, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
       propertyPath: m_Name
       value: MatchController
       objectReference: {fileID: 0}
+    - target: {fileID: 5236345137279768059, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+      propertyPath: sceneId
+      value: 492822797
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+--- !u!1 &8062697702144072225 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6571455253853067439, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+  m_PrefabInstance: {fileID: 8062697702144072224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8062697702144072226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1901286283908641240, guid: d203d2361fe7fcc4899fab457eec6d1e, type: 3}
+  m_PrefabInstance: {fileID: 8062697702144072224}
+  m_PrefabAsset: {fileID: 0}
