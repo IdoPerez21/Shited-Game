@@ -64,6 +64,7 @@ namespace Mirror.Examples.MultipleMatch
         {
             base.OnClientConnect();
             canvasController.OnClientConnect();
+            Debug.Log("On client connect");
         }
 
         /// <summary>

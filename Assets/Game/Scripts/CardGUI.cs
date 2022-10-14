@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class CardGUI : MonoBehaviour
+using Mirror;
+public class CardGUI : NetworkBehaviour
 {
 	[Header("Card Script", order = 1)]
 	[SerializeReference]
@@ -22,7 +22,13 @@ public class CardGUI : MonoBehaviour
         selected = false;
     }
 
-	public void SetFaceUpImage(Sprite faceUpSprite)
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+		GetComponent<Image>().sprite = hasAuthority ? Face_up_image : Face_down_image;
+    }
+
+    public void SetFaceUpImage(Sprite faceUpSprite)
     {
 		Face_up_image = faceUpSprite;
 		GetComponent<Image>().sprite = faceUpSprite;

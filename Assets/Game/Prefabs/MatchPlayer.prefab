@@ -117,8 +117,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HandView: {fileID: 6290472527227552024}
+  HiddenCardsView: {fileID: 0}
   LayoutElementPrefab: {fileID: 1568824989545789273, guid: 19ff185d74b704143b54dc2e36af7507, type: 3}
-  elements_count: 0
 --- !u!1 &7249991803183977313
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 107144121927837630}
   - component: {fileID: 5980284708420100388}
+  - component: {fileID: 838496592477822651}
   m_Layer: 5
   m_Name: MatchPlayer
   m_TagString: Untagged
@@ -169,3 +170,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0a3f2f3df0cd144847559deca5010a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &838496592477822651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7249991803183977313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 773b19f5809e707409965af73d07b777
+  hasSpawned: 0

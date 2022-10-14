@@ -20,8 +20,14 @@ public class Deck
 
 	public Deck()
 	{
+		cards_list = new List<Card>();
 		selected_cards = new List<Card>();
 	}
+
+	public Deck(List<Card> cards)
+    {
+		cards_list = cards;
+    }
 
     private void FillDeckCards()
     {
@@ -58,7 +64,7 @@ public class Deck
 	//	for (int i = 0; i < amount; i++)
 	//	{
 	//		int index = Random.Range(0, cards_list.Count);
-	//		d.PushCard(PopCard(index));
+	//		d.ShowCard(PopCard(index));
 	//	}
 	//	return d;
 	//}

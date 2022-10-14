@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3602589383431755225}
   - component: {fileID: 51106195070652351}
   - component: {fileID: 4060945977490144698}
+  - component: {fileID: 3242953875730124808}
   m_Layer: 5
   m_Name: CardGUI
   m_TagString: Untagged
@@ -134,15 +135,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d313ff16794b274a9b589acb03ac9fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   card:
     rid: -2
   CardBtn: {fileID: 51106195070652351}
   Face_up_image: {fileID: 0}
   Face_down_image: {fileID: 21300000, guid: 1b5edfaa43a45d342b122c301a8184e0, type: 3}
-  CardPrefab: {fileID: 0}
+  CardPrefab: {fileID: 2942622101652445849}
   selected: 0
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+--- !u!114 &3242953875730124808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2942622101652445849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: abfe3093a81fe3e4e8cebc63944c8850
+  hasSpawned: 0

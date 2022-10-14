@@ -308,7 +308,6 @@ namespace Mirror.Examples.MultipleMatch
                     }
                 }
             }
-
             SendMatchList();
         }
 
@@ -320,6 +319,7 @@ namespace Mirror.Examples.MultipleMatch
         internal void OnClientConnect()
         {
             playerInfos.Add(NetworkClient.connection, new PlayerInfo { playerIndex = this.playerIndex, ready = false });
+            Debug.Log("Player added");
         }
 
         internal void OnStartClient()

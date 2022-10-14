@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KupaGUI : MonoBehaviour
 {
-    public Deck kupa = new Deck(FillDeck: true);
+    public Deck kupa = new(FillDeck: true);
 
     [Header("Assigned in inspector")]
     public List<Sprite> FaceUp_Sprites;
@@ -37,6 +37,14 @@ public class KupaGUI : MonoBehaviour
     public CardGUI GetCardFromKupa()
     {
         return CreateCardGUI(kupa.PopRandomCard());
+    }
+
+    public List<CardGUI> GetRandomDeck(int amount)
+    {
+        List<Card> deck = kupa.GetRandomDeck(amount);
+        List<CardGUI> cards = new();
+        foreach (Card card in deck) cards.Add(CreateCardGUI(card));
+        return cards;
     }
 
     private CardGUI CreateCardGUI(Card card)
