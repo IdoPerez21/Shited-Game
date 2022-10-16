@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6757274008569812507}
   - component: {fileID: 3152934635998721581}
+  - component: {fileID: 2148489144822836016}
   m_Layer: 5
   m_Name: PlayerView
   m_TagString: Untagged
@@ -26,7 +27,7 @@ RectTransform:
   m_GameObject: {fileID: 3004305144390138360}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,3 +53,29 @@ MonoBehaviour:
   HandView: {fileID: 3004305144390138360}
   HiddenCardsView: {fileID: 0}
   LayoutElementPrefab: {fileID: 1568824989545789273, guid: 19ff185d74b704143b54dc2e36af7507, type: 3}
+--- !u!114 &2148489144822836016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3004305144390138360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0

@@ -32,6 +32,7 @@ public class CardGUI : NetworkBehaviour
     {
 		Face_up_image = faceUpSprite;
 		GetComponent<Image>().sprite = faceUpSprite;
+		//GetComponent<Image>().type = Image.Type.Simple;
     }
 
     // Start is called before the first frame update

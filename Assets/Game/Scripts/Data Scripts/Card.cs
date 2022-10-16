@@ -40,7 +40,12 @@ public class Card
 
 	public int GetShape() { return shape; }
 
-	public int GetCardIndex() { return value * shape; }
+	public int GetCardIndex() 
+	{
+		if (value == 14)
+			return shape * (value - 1);
+		return (value + - 1) * (shape + 1); 
+	}
 
 	public bool isFace_down()
 	{

@@ -9,7 +9,8 @@ public class KupaGUI : MonoBehaviour
     [Header("Assigned in inspector")]
     public List<Sprite> FaceUp_Sprites;
     public GameObject CardPrefab;
-    public MatchController MatchController;
+    //public MatchController MatchController;
+    public Dictionary<Card, CardGUI> MatchCards = new Dictionary<Card, CardGUI>();
 
     void Awake()
     {
@@ -29,29 +30,31 @@ public class KupaGUI : MonoBehaviour
 
     public void FillMatchCards()
     {
+        int index = 0;
         foreach(Card card in kupa.cards_list)
         {
-            MatchController.MatchCards.Add(card, CreateCardGUI(card));
+           MatchCards.Add(card, CreateCardGUI(card, index));
+            index++;
         }
     }
     public CardGUI GetCardFromKupa()
     {
-        return CreateCardGUI(kupa.PopRandomCard());
+        return MatchCards[kupa.PopRandomCard()];
     }
 
     public List<CardGUI> GetRandomDeck(int amount)
     {
         List<Card> deck = kupa.GetRandomDeck(amount);
         List<CardGUI> cards = new();
-        foreach (Card card in deck) cards.Add(CreateCardGUI(card));
+        foreach (Card card in deck) cards.Add(MatchCards[card]);
         return cards;
     }
 
-    private CardGUI CreateCardGUI(Card card)
+    private CardGUI CreateCardGUI(Card card, int index)
     {
         CardGUI cardGui = Instantiate(CardPrefab, transform).GetComponent<CardGUI>();
         cardGui.card = card;
-        cardGui.SetFaceUpImage(FaceUp_Sprites[cardGui.card.GetCardIndex()]);
+        cardGui.SetFaceUpImage(FaceUp_Sprites[index]);
         cardGui.CardPrefab = CardPrefab;
         cardGui.name = "CardValue" + card.getValue() + "Shape" + card.GetShape();
         cardGui.SetActive(false);

@@ -4,26 +4,81 @@ using UnityEngine;
 using Mirror;
 public class MatchPlayer : NetworkBehaviour
 {
-    //PlayerHandGUI playerHand;
+    public PlayerHandGUI handGui;
     public Deck playerHand;
     public int index;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public MatchController matchController;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        //Debug.Log("Auth: " + connectionToClient);
+    }
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (isClientOnly)
+        {
+            //Debug.Log(connectionToClient);
+            matchController = GameObject.FindObjectOfType<MatchController>();
+        }
+        Debug.Log(connectionToClient);
+        //handGui = matchController.GetPlayerHand();
+        //handGui = matchController.GetPlayerHand(connectionToClient);
+        //if (!hasAuthority)
+        //{
+        //    handGui = matchController.PlayerHands[connectionToClient];
+        //    Debug.Log(matchController.PlayerHands[connectionToClient]);
+        //}
+        //else
+        //{
+        //    handGui = matchController.PlayerView;
+        //    Debug.Log(matchController.PlayerView);
+        //}
+    }
+    public void InitPlayer(List<CardGUI> cards)
+    {
+        playerHand = new();
+        foreach (CardGUI card in cards)
+            GetCardFromKupa(card);
     }
 
-    public void InitPlayer(List<Card> cards)
+    public void GetCardFromKupa(CardGUI card)
     {
-        playerHand = new Deck();
-        playerHand.setCardsList(cards);
+        card.gameObject.SetActive(true);
+        NetworkServer.Spawn(card.gameObject, connectionToClient);
+        PushCard(card);
     }
+
+    public void PushCard(CardGUI card)
+    {
+        playerHand.PushCard(card.card);
+        //Debug.Log(handGui);
+        TargetShowCard(card);
+        //if (handGui != null)
+        //    RpcShowCard(card);
+        //else
+        //{
+        //    Debug.Log("hand null");
+        //}
+    }
+
+    [TargetRpc]
+    public void TargetShowCard(CardGUI card)
+    {
+        Debug.Log("Rpc show card");
+        //if(matchController.PlayerHands[card.connectionToClient] == null)
+        //{
+        //    Debug.Log("null");
+        //    return;
+        //}
+        //matchController.PlayerHands[card.connectionToClient].ShowCard(card);
+        if (handGui == null)
+            return;
+        handGui.ShowCard(card);
+        Debug.Log(handGui.HandView);
+    }
+
 
     //public void InitPlayer(List<CardGUI> cards)
     //{

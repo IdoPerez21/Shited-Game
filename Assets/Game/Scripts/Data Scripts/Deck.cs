@@ -31,10 +31,10 @@ public class Deck
 
     private void FillDeckCards()
     {
-        for (int j = 0; j < 4; j++)
-            for (int i = 1; i < 14; i++)
+        for (int shape = 0; shape < 4; shape++)
+            for (int v = 1; v < 14; v++)
             {
-				Card card = new Card(i, j);
+				Card card = new Card(v, shape);
 				cards_list.Add(card);
             }
         //for (int i = 0; i < 2; i++) // jokers
