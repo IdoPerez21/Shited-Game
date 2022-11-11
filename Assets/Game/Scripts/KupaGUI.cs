@@ -33,7 +33,10 @@ public class KupaGUI : MonoBehaviour
         int index = 0;
         foreach(Card card in kupa.cards_list)
         {
-           MatchCards.Add(card, CreateCardGUI(card, index));
+           CardGUI cardGUI = CreateCardGUI(card, index);
+           MatchCards.Add(card, cardGUI);
+           MatchController.cards.Add(cardGUI);
+           MatchController.MatchCards.Add(card,cardGUI);
             index++;
         }
     }

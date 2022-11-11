@@ -13,21 +13,50 @@ public class PlayerHandGUI : MonoBehaviour
 
     //[SerializeReference]
     //public Deck hand;
-
-    public void ShowCard(CardGUI cardGUI)
+    public void UpdateHand(List<Card> cards)
     {
+        Debug.Log("Update hand");
+        foreach (Card card in cards)
+        {
+            card.Print();
+            ShowCard(MatchController.MatchCards[card]);
+        }
+    }
+    public void ShowCard(CardGUI cardGUI, Transform view = null)
+    {
+        if (view == null)
+            view = HandView.transform;
         //hand.ShowCard(cardGUI.card);
-        GameObject element = Instantiate(LayoutElementPrefab, HandView.transform);
+        //Debug.Log("show: " + index);
+        //CardGUI cardGUI = MatchController.cards[index];
+        //if (!GetComponent<NetworkIdentity>().hasAuthority)
+        //    cardGUI.setFaceDown(true);
+        //Debug.Log(cardGUI);
+        GameObject element = Instantiate(LayoutElementPrefab, view);
         cardGUI.transform.SetParent(element.transform, false);
         hand_elements.Add(cardGUI, element);
+        cardGUI.gameObject.SetActive(true);
     }
 
     public void InitHand(List<CardGUI> cards)
     {
         //hand = new Deck();
-        foreach(CardGUI card in cards)
+        //foreach (CardGUI card  in cards)
+        //    Debug.Log(card);
+        int i = 0;
+        foreach (CardGUI card in cards)
         {
-            ShowCard(card);
+            if (i < 3)
+            {
+                //Debug.Log("hide card index: " + cards[i]);
+                HideCard(card);
+                i++;
+            }
+            else
+            {
+                //Debug.Log("show card index: " + cards[i]);
+                ShowCard(card);
+            }
         }
     }
 
@@ -45,6 +74,8 @@ public class PlayerHandGUI : MonoBehaviour
 
     private void HideCard(CardGUI card)
     {
-        //player_cards[card].setFace_down(true);
+        card.setFaceDown(true);
+        ShowCard(card, HiddenCardsView.transform);
+        //player_cards[card].setFaceDown(true);
     }
 }

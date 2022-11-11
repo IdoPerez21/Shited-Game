@@ -4,25 +4,43 @@ using UnityEngine;
 public class Card
 {
     [SerializeField]
-    private int value, shape;
+    private int value, shape, index;
 
     [SerializeField]
     private bool available, face_down, open_card;
 
 	public Card(int Value, int shape)
 	{
+		//value = Value;
+		//this.shape = shape;
+		//available = true;
+		//face_down = false;
+		//open_card = false;
+
+        SetValue(Value);
+        SetFace_down(false);
+        SetShape(shape);
+    }
+
+	public Card()
+    {
+
+    }
+
+    public Card(int Value, int shape, int index)
+    {
+		this.index = index;
 		SetValue(Value);
 		SetFace_down(false);
 		SetShape(shape);
-		//available = true;
 	}
 
-	public Card(int Value)
-	{
-		this.value = Value;
-	}
+    //public Card(int Value)
+    //{
+    //	this.value = Value;
+    //}
 
-	public int getValue() { return value; }
+    public int getValue() { return value; }
 	public void SetValue(int Value)
 	{
 		if (Value == 1)
@@ -42,9 +60,10 @@ public class Card
 
 	public int GetCardIndex() 
 	{
-		if (value == 14)
-			return shape * (value - 1);
-		return (value + - 1) * (shape + 1); 
+		return index;
+		//if (value == 14)
+		//	return shape * (value - 1);
+		//return (value + - 1) * (shape + 1); 
 	}
 
 	public bool isFace_down()
@@ -88,7 +107,14 @@ public class Card
 
 	public void Print()
 	{
-		Debug.Log("Card: " + getValue() + " faceDown: " + isFace_down()
-		+ " available:" + isAvailable() + " opencard: " + isOpen_card());
+		Debug.Log("Card: " + getValue() + " shape: " + GetShape() + " faceDown: " + isFace_down()
+		+ " available: " + isAvailable() + " opencard: " + isOpen_card() + " index: " + GetCardIndex());
+	}
+
+	public override string ToString()
+    {
+		return ("Card: " + getValue() + " faceDown: " + isFace_down()
+		+ " available:" + isAvailable() + " opencard: " + isOpen_card() + GetCardIndex());
+
 	}
 }

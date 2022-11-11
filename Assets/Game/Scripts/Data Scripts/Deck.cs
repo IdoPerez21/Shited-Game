@@ -31,12 +31,14 @@ public class Deck
 
     private void FillDeckCards()
     {
-        for (int shape = 0; shape < 4; shape++)
+		int index = 0;
+        for (int shape = 1; shape < 5; shape++)
             for (int v = 1; v < 14; v++)
             {
-				Card card = new Card(v, shape);
+				Card card = new Card(v, shape, index);
 				cards_list.Add(card);
-            }
+				index++;
+			}
         //for (int i = 0; i < 2; i++) // jokers
         //    CreateCard(15, i);
     }
@@ -130,7 +132,7 @@ public class Deck
 	public Card getLowestCard()
 	{
 		long cardValue;
-		Card low = new Card(100);
+		Card low = new Card(100, 2);
 		foreach (Card c in cards_list)
 		{
 			if (c.isAvailable())

@@ -851,11 +851,11 @@ PlayerSettings:
     m_VersionName: 
   apiCompatibilityLevel: 6
   activeInputHandler: 0
-  cloudProjectId: 
+  cloudProjectId: 1ba0bd56-6e13-4aff-8740-2637a6ffe815
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: Shited
+  organizationId: stamgames
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 

@@ -53,8 +53,16 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handGui: {fileID: 0}
+  playerHand:
+    rid: -2
+  selected_cards: []
   index: 0
   matchController: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &838496592477822651
 MonoBehaviour:
   m_ObjectHideFlags: 0
