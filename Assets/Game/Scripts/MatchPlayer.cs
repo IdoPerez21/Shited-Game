@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class MatchPlayer : NetworkBehaviour
 {
@@ -10,14 +12,12 @@ public class MatchPlayer : NetworkBehaviour
     [SerializeReference]
     public Deck playerHand;
     public readonly SyncList<int> player_cards = new();
-    public List<CardGUI> selected_cards = new();
+    public UnityAction player_ready_action;
+
+    public bool player_ready;
+    public SyncList<int> selected_cards = new();
     public int index;
     public MatchController matchController;
-
-    void Update()
-    {
-       //Debug.Log("Auth: " + connectionToClient);
-    }
 
     public override void OnStartServer()
     {
@@ -28,7 +28,7 @@ public class MatchPlayer : NetworkBehaviour
         base.OnStartClient();
         //player_cards.Callback += OnDeckUpdated;
         //CmdTest();
-        
+
         //if (isClientOnly)
         //{
         //    //Debug.Log(connectionToClient);
@@ -74,6 +74,8 @@ public class MatchPlayer : NetworkBehaviour
                 card.SetFace_down(true);
                 i++;
             }
+
+
             //MatchController.cards[card.GetCardIndex()].UpdateUI();
             //card.Print();
             //RpcShowCard(card.GetCardIndex());
@@ -92,15 +94,11 @@ public class MatchPlayer : NetworkBehaviour
 
     public void PushCard(CardGUI card)
     {
-        playerHand.PushCard(card.card);
-        //Debug.Log(handGui);
-        //RpcShowCard(card);
-        //if (handGui != null)
-        //    RpcShowCard(card);
-        //else
-        //{
-        //    Debug.Log("hand null");
-        //}
+        card.CardReset();
+        if (!hasAuthority)
+            card.setFaceDown(true);
+        card.AddClickListener(OnClickCardListener(card));
+        handGui.PushCard(card);
     }
 
 
@@ -117,7 +115,7 @@ public class MatchPlayer : NetworkBehaviour
     [ClientRpc]
     public void RpcInitPlayer(List<int> indexs)
     {
-        Debug.Log("Rpc show card");
+        Debug.Log("Rpc show cards: " + connectionToClient);
         if (handGui == null)
             return;
         List<CardGUI> cards = new List<CardGUI>();
@@ -129,88 +127,141 @@ public class MatchPlayer : NetworkBehaviour
                 Debug.Log("enemy card: " + i);
                 card.setFaceDown(true);
             }
+            else
+                card.CardBtn.onClick.AddListener(OnClickCardListener(card));
             cards.Add(card);
         }
-        if (isServer)
-            playerHand.PrintDeck();
+        //if (isServer)
+        //    playerHand.PrintDeck();
+        Debug.Log(handGui + " " + cards.Count);
         handGui.InitHand(cards);
         //Debug.Log(handGui.HandView);
     }
 
-    public void OnClickCard(CardGUI card)
+    [Command]
+    public void PlayerReady()
     {
-        if (!card.card.isAvailable()) return;
-        CardPressed(card);
-        Debug.Log("pressed" + card);
+        Debug.Log("player ready from match player");
     }
 
-    public void CardPressed(CardGUI cardGUI)
+    public void SetSelectedAsOpenCards()
     {
-        Debug.Log(cardGUI);
+        foreach(int i in selected_cards)
+        {
+            CardGUI card = MatchController.GetCardByIndex(i);
+            card.card.SetOpen_card(true);
+        }
+        RpcShowOpenCards();
+    }
+
+    [ClientRpc]
+    public void RpcShowOpenCards()
+    {
+        Debug.Log("Show open cards");
+        Debug.Log("selected cards size: " + selected_cards.Count);
+        List<CardGUI> cards = new();
+        foreach (int i in selected_cards)
+        {
+            CardGUI card = MatchController.GetCardByIndex(i);
+            card.setOpen_card(true);
+            cards.Add(card);
+        }
+        handGui.SetOpenCards(cards);
+    }
+
+    //public void OnClickCardListener(CardGUI card)
+    //{
+    //    if (!card.card.isAvailable()) return;
+    //    CardPressed(card);
+    //    Debug.Log("pressed" + card);
+    //}
+
+    public UnityAction OnClickCardListener(CardGUI card)
+    {
+        return new (() => {
+            CmdCardPressed(card.card.GetCardIndex());
+            Debug.Log("pressed" + card);
+        });
+        //CardPressed(card);
+    }
+
+    [Command]
+    public void CmdCardPressed(int index)
+    {
+        CardGUI cardGUI = MatchController.GetCardByIndex(index);
+        if (!cardGUI.card.isAvailable()) return;
+
+        //Debug.Log(cardGUI);
         int selected_cards_size = selected_cards.Count;
         Card c = cardGUI.card;
-        //if (c.IsSelected())
-        //{
-        //    c.SetSelected(false);
-        //    //Debug.Log("UnSelecting Card");
-        //    Hand.Selected_cards.Remove(c);
-        //    return;
-        //}
-        //GameState.GetGameState()
+
+        Debug.Log(MatchController.GameState);
+        Debug.Log("size: " + selected_cards.Count);
+
         if (cardGUI.selected)
         {
-            cardGUI.SetSelected(false);
+            //cardGUI.SetSelected(false);
+            TargetSetCardSelected(connectionToClient, c.GetCardIndex(), false);
             //Debug.Log("UnSelecting Card");
-            selected_cards.Remove(cardGUI);
+            selected_cards.Remove(cardGUI.card.GetCardIndex());
             return;
         }
-        Debug.Log(MatchController.GameState);
-        Debug.Log("size: " + selected_cards_size);
+
         if ((MatchController.GameState != MatchController.GameStates.START && selected_cards_size != 0))
         {
-            if (selected_cards[0].card.getValue() != c.getValue())
+            CardGUI selectedCard = MatchController.GetCardByIndex(selected_cards[0]);
+            if (selectedCard.card.getValue() != c.getValue())
             {
-                foreach (CardGUI selected in selected_cards)
-                    selected.SetSelected(false);
+                foreach (int selected in selected_cards)
+                    TargetSetCardSelected(connectionToClient, selected, false);
+
+                //MatchController.GetCardByIndex(selected).SetSelected(false);
                 selected_cards.Clear();
             }
-            cardGUI.SetSelected(true);
-            Debug.Log(cardGUI + "pressed on game play");
-            selected_cards.Add(cardGUI);
+            //cardGUI.SetSelected(true);
+            selected_cards.Add(cardGUI.card.GetCardIndex());
+            TargetSetCardSelected(connectionToClient, c.GetCardIndex(), true);
         }
         else if (selected_cards_size < 3)
         {
             Debug.Log("pick open card");
-            cardGUI.SetSelected(true);
-            selected_cards.Add(cardGUI);
+            //cardGUI.SetSelected(true);
+            selected_cards.Add(cardGUI.card.GetCardIndex());
+            TargetSetCardSelected(connectionToClient, c.GetCardIndex(), true);
             //Debug.Log("You can only choose 3 cards");
         }
-        //if (selected_cards_size >= 0 && selected_cards_size < 3)
-        //	if (GameState.GetGameState() == GameState.GameStates.START || Hand.Selected_cards[0].getValue() == c.getValue())
-        //          {
-        //              c.SetSelected(true);
-        //              Hand.Selected_cards.Add(c);
-        //          }
+
+        
+    }
+    [TargetRpc]
+    public void TargetSetCardSelected(NetworkConnection target, int index, bool selected)
+    {
+        Debug.Log(index + "got selected");
+        MatchController.GetCardByIndex(index).SetSelected(selected);
     }
 
-    public void PushCard(Card card)
-    {
-        playerHand.PushCard(card);
-        //Debug.Log(handGui);
-        //RpcShowCard(card.GetCardIndex());
-        //if (handGui != null)
-        //    RpcShowCard(card);
-        //else
-        //{
-        //    Debug.Log("hand null");
-        //}
-    }
+    //[Command]
+    //public void CmdCardSelected(SyncList<int>.Operation op, int card = -1)
+    //{
+    //    switch(op)
+    //    {
+    //        case SyncList<int>.Operation.OP_ADD:
+    //            selected_cards.Add(card);
+    //            break;
+    //        case SyncList<int>.Operation.OP_CLEAR:
+    //            selected_cards.Clear();
+    //            break;
+    //        case SyncList<int>.Operation.OP_REMOVEAT:
+    //            selected_cards.Remove(card);
+    //            break;
+    //    }
+    //}
 
     [ClientRpc]
     public void RpcUpdateHand(List<Card> cards)
     {
         Debug.Log("update");
-        handGui.UpdateHand(cards);
+        //handGui.UpdateHand(cards);
     }
 
 
@@ -234,7 +285,7 @@ public class MatchPlayer : NetworkBehaviour
         //matchController.PlayerHands[card.connectionToClient].ShowCard(card);
         if (handGui == null)
             return;
-        handGui.ShowCard(card);
+        //handGui.ShowCard(card);
         Debug.Log(handGui.HandView);
     }
 

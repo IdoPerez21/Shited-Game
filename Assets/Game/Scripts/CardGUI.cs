@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using System;
+using UnityEngine.Events;
 
 public class CardGUI : NetworkBehaviour
 {
@@ -30,6 +31,20 @@ public class CardGUI : NetworkBehaviour
 		GetComponent<Image>().sprite = hasAuthority ? Face_up_image : Face_down_image;
     }
 
+	public void CardReset()
+    {
+		setOpen_card(false);
+		setFaceDown(false);
+		if(selected)
+			SetSelected(false);
+		GetComponent<Button>().onClick.RemoveAllListeners();
+    }
+
+	public void AddClickListener(UnityAction onClick)
+    {
+		GetComponent<Button>().onClick.AddListener(onClick);
+    }
+
     public void SetFaceUpImage(Sprite faceUpSprite)
     {
 		Face_up_image = faceUpSprite;
@@ -48,23 +63,26 @@ public class CardGUI : NetworkBehaviour
 
 	public void setOpen_card(bool open_card)
 	{
-        //card.SetOpen_card(open_card);
-        //this.open_card = open_card;
-        if (open_card)
+		//card.SetOpen_card(open_card);
+		//this.open_card = open_card;
+		setFaceDown(!open_card);
+		if (open_card)
         {
-            //setBackground(Color.BLUE);
-            //setEnabled(false);
-            //available = false;
-            GetComponent<SpriteRenderer>().sortingLayerName = "OpenCard";
+			//setBackground(Color.BLUE);
+			//setEnabled(false);
+			//available = false;
+			//GetComponent<SpriteRenderer>().sortingLayerName = "OpenCard";
+			transform.Rotate(Vector3.right);
         }
         else
         {
-            //setEnabled(true);
-            GetComponent<SpriteRenderer>().sortingLayerName = "Card";
-            //available = true;
-            //setBackground(Color.WHITE);
-        }
-    }
+			//setEnabled(true);
+			//GetComponent<SpriteRenderer>().sortingLayerName = "Card";
+			//available = true;
+			//setBackground(Color.WHITE);
+			transform.rotation = new Quaternion(0, 0, 0, 0);
+		}
+	}
 
 
 	public void SetInteractable(bool value)
