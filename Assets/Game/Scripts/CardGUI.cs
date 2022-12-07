@@ -17,19 +17,25 @@ public class CardGUI : NetworkBehaviour
     public Sprite Face_up_image, Face_down_image;
 	public GameObject CardPrefab;
 
-	public bool selected;
+    [SerializeField]
+	private float Hidden_card_size, Normal_card_size, Pile_card_size;
+
+	public bool selected, face_down, avalible;
 
 
     void Awake()
     {
         selected = false;
+		face_down = false;
+		avalible = false;
     }
 
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-		GetComponent<Image>().sprite = hasAuthority ? Face_up_image : Face_down_image;
-    }
+  //  public override void OnStartClient()
+  //  {
+  //      base.OnStartClient();
+		////GetComponent<Image>().sprite = hasAuthority ? Face_up_image : Face_down_image;
+		////Debug.Log
+  //  }
 
 	public void CardReset()
     {
@@ -55,10 +61,33 @@ public class CardGUI : NetworkBehaviour
     // Start is called before the first frame update
 	public void setFaceDown(bool face_down)
 	{
+		this.face_down = face_down;
+		avalible = !face_down;
 		Image image = GetComponent<Image>();
 		image.sprite = face_down ? Face_down_image : Face_up_image;
 		GetComponent<Button>().enabled = !face_down;
         Debug.Log("Card face down : " + image.sprite);
+	}
+
+	public void SetPileCard(bool value)
+    {
+		CardBtn.enabled = value;
+		GetComponent<RectTransform>().sizeDelta = value ? new Vector2(Pile_card_size, Pile_card_size) : new Vector2(Normal_card_size, Normal_card_size);
+	}
+
+	public void SetTableCard(bool value)
+    {
+		CardBtn.enabled = !value;
+		//SetInteractable(!value);
+		if (value)
+		{
+			GetComponent<RectTransform>().sizeDelta = new Vector2(Hidden_card_size, Hidden_card_size);
+		}
+		else
+		{
+			//SetInteractable(true);
+			GetComponent<RectTransform>().sizeDelta = new Vector2(Normal_card_size, Normal_card_size);
+		}
 	}
 
 	public void setOpen_card(bool open_card)
@@ -66,13 +95,15 @@ public class CardGUI : NetworkBehaviour
 		//card.SetOpen_card(open_card);
 		//this.open_card = open_card;
 		setFaceDown(!open_card);
-		if (open_card)
+		SetTableCard(open_card);
+        if (open_card)
         {
 			//setBackground(Color.BLUE);
 			//setEnabled(false);
 			//available = false;
 			//GetComponent<SpriteRenderer>().sortingLayerName = "OpenCard";
-			transform.Rotate(Vector3.right);
+			transform.Rotate(-Vector3.forward * 6f);
+			transform.localPosition = Vector3.right * 4f;
         }
         else
         {
@@ -81,13 +112,14 @@ public class CardGUI : NetworkBehaviour
 			//available = true;
 			//setBackground(Color.WHITE);
 			transform.rotation = new Quaternion(0, 0, 0, 0);
+			transform.localPosition = Vector3.zero;
 		}
 	}
 
 
 	public void SetInteractable(bool value)
 	{
-		Image image = GetComponent<Image>();
+		//Image image = GetComponent<Image>();
 		Debug.Log("enabled : " + enabled + " new value : " + value);
 		if (value)
 		{
@@ -102,6 +134,23 @@ public class CardGUI : NetworkBehaviour
 			Debug.Log("card unenabled");
 		}
 	}
+
+	public void SetAvalible(bool value)
+    {
+		avalible = value;
+		CardBtn.enabled = value;
+		Image image = GetComponent<Image>();
+		if(value)
+        {
+			Debug.Log("Card avalible");
+			image.color = Color.white;
+        }
+        else
+        {
+			Debug.Log("Card unavalible");
+			image.color = Color.gray;
+        }
+    }
 
 	public void SetSelected(bool value)
 	{

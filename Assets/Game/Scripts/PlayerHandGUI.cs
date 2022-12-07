@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System;
 
 public class PlayerHandGUI : MonoBehaviour
 {
@@ -26,9 +27,9 @@ public class PlayerHandGUI : MonoBehaviour
         int i = 0;
         foreach (CardGUI card in hidden_cards_elements.Keys)
         {
-            Debug.Log("card face down");
+            //Debug.Log("card face down");
             cards[i].transform.SetParent(hidden_cards_elements[card].transform, false);
-            Destroy(hand_elements[cards[i]]);
+            RemoveCard(cards[i]);
             i++;
             if (i == 3)
                 return;
@@ -67,13 +68,13 @@ public class PlayerHandGUI : MonoBehaviour
             //ShowCard(card);
             if (i < 3)
             {
-                Debug.Log("hide card index: " + cards[i]);
+                //Debug.Log("hide card index: " + cards[i]);
                 HideCard(card);
                 i++;
             }
             else
             {
-                Debug.Log("show card index: " + cards[i]);
+                //Debug.Log("show card index: " + cards[i]);
                 ShowCard(card, hand_elements);
             }
         }
@@ -98,6 +99,7 @@ public class PlayerHandGUI : MonoBehaviour
     private void HideCard(CardGUI card)
     {
         card.setFaceDown(true);
+        card.SetTableCard(true);
         ShowCard(card, hidden_cards_elements, HiddenCardsView.transform);
         //player_cards[card].setFaceDown(true);
     }
@@ -105,5 +107,23 @@ public class PlayerHandGUI : MonoBehaviour
     public void RemoveCard(CardGUI card)
     {
         Destroy(hand_elements[card]);
+        hand_elements.Remove(card);
+    }
+
+    public void SetReleventsCards(List<CardGUI> relevent_cards)
+    {
+        Debug.Log(hand_elements.Keys.Count);
+        foreach (CardGUI card in hand_elements.Keys) 
+        {
+            card.SetAvalible(true);
+        }
+        foreach (CardGUI card in relevent_cards)
+            card.SetAvalible(false);
+    }
+
+    public void DisableDeck()
+    {
+        foreach(CardGUI card in hand_elements.Keys)
+            card.SetAvalible(false);
     }
 }

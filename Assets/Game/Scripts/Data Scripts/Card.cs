@@ -7,7 +7,7 @@ public class Card
     private int value, shape, index;
 
     [SerializeField]
-    private bool available, face_down, open_card;
+    private bool available, face_down, open_card; 
 
 	public Card(int Value, int shape)
 	{
@@ -20,6 +20,7 @@ public class Card
         SetValue(Value);
         SetFace_down(false);
         SetShape(shape);
+		available = true;
     }
 
 	public Card()
@@ -30,6 +31,7 @@ public class Card
     public Card(int Value, int shape, int index)
     {
 		this.index = index;
+		available = true;
 		SetValue(Value);
 		SetFace_down(false);
 		SetShape(shape);
