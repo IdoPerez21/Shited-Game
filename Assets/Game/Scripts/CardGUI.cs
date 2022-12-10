@@ -41,6 +41,8 @@ public class CardGUI : NetworkBehaviour
     {
 		setOpen_card(false);
 		setFaceDown(false);
+		SetAvalible(true);
+		SetPileCard(false);
 		if(selected)
 			SetSelected(false);
 		GetComponent<Button>().onClick.RemoveAllListeners();
@@ -66,12 +68,12 @@ public class CardGUI : NetworkBehaviour
 		Image image = GetComponent<Image>();
 		image.sprite = face_down ? Face_down_image : Face_up_image;
 		GetComponent<Button>().enabled = !face_down;
-        Debug.Log("Card face down : " + image.sprite);
+        //Debug.Log("Card face down : " + image.sprite);
 	}
 
 	public void SetPileCard(bool value)
     {
-		CardBtn.enabled = value;
+		CardBtn.enabled = !value;
 		GetComponent<RectTransform>().sizeDelta = value ? new Vector2(Pile_card_size, Pile_card_size) : new Vector2(Normal_card_size, Normal_card_size);
 	}
 
@@ -120,18 +122,18 @@ public class CardGUI : NetworkBehaviour
 	public void SetInteractable(bool value)
 	{
 		//Image image = GetComponent<Image>();
-		Debug.Log("enabled : " + enabled + " new value : " + value);
+		//Debug.Log("enabled : " + enabled + " new value : " + value);
 		if (value)
 		{
 			CardBtn.interactable = true;
 			//transform.localScale = Vector3.one;
-			Debug.Log("card enabled");
+			//Debug.Log("card enabled");
 		}
 		else
 		{
 			CardBtn.interactable = false;
 			//transform.localScale -= Vector3.one * 0.1f;
-			Debug.Log("card unenabled");
+			//Debug.Log("card unenabled");
 		}
 	}
 
@@ -142,12 +144,12 @@ public class CardGUI : NetworkBehaviour
 		Image image = GetComponent<Image>();
 		if(value)
         {
-			Debug.Log("Card avalible");
+			//Debug.Log("Card avalible");
 			image.color = Color.white;
         }
         else
         {
-			Debug.Log("Card unavalible");
+			//Debug.Log("Card unavalible");
 			image.color = Color.gray;
         }
     }

@@ -48,6 +48,14 @@ public class Deck
 		return cards_list;
 	}
 
+	public List<int> GetDeckIndexs()
+    {
+		List<int> indexs = new List<int>();
+		foreach (Card card in cards_list)
+			indexs.Add(card.GetCardIndex());
+		return indexs;
+    }
+
 	public void ClearSelection()
 	{
 		selected_cards.Clear();

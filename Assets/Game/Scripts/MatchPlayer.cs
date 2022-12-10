@@ -87,11 +87,22 @@ public class MatchPlayer : NetworkBehaviour
         //player_cards.Add(card.card.GetCardIndex());
     }
 
-    public void GetCardFromKupa(CardGUI card)
+    [ClientRpc]
+    public void RpcGetCardFromKupa(int card_index)
     {
-        card.gameObject.SetActive(true);
-        NetworkServer.Spawn(card.gameObject, connectionToClient);
-        PushCard(card);
+        //get card from kupa animation
+        PushCard(MatchController.GetCardByIndex(card_index));
+        handGui.EnableDeck(true);
+    }
+
+    public void TakePile(List<int> pile_indexs)
+    {
+        //take pile animation
+        Debug.Log("take pile: " + pile_indexs.Count);
+        foreach (int index in pile_indexs)
+        {
+            RpcGetCardFromKupa(index);
+        }
     }
 
     public void PushCard(CardGUI card)
@@ -103,6 +114,54 @@ public class MatchPlayer : NetworkBehaviour
         handGui.PushCard(card);
     }
 
+    public void UseOpenCards()
+    {
+        List<int> OpenCardsindex = new List<int>();
+        foreach (Card c in playerHand.GetCardsList())
+            if (c.isOpen_card())
+            {
+                c.SetOpen_card(false);
+                c.setAvailable(true);
+                OpenCardsindex.Add(c.GetCardIndex());
+                //c.setSelected(false);
+            }
+        RpcUseOpenCards(OpenCardsindex);
+    }
+
+    public void UseFaceDownCards()
+    {
+        foreach (Card c in playerHand.GetCardsList())
+        {
+            c.SetFace_down(false);
+            c.setAvailable(true);
+        }
+        RpcUseFacedownCards();
+    }
+
+    [ClientRpc]
+    public void RpcUseOpenCards(List<int> Open_cards_indexs)
+    {
+        foreach(int index in Open_cards_indexs)
+        {
+            CardGUI c = MatchController.GetCardByIndex(index);
+            c.CardReset();
+            c.SetAvalible(true);
+            handGui.PushCard(c);
+        }
+    }
+
+    [ClientRpc]
+    public void RpcUseFacedownCards()
+    {
+        CardGUI cGUI;
+        foreach(Card c in playerHand.GetCardsList())
+        {
+            cGUI = MatchController.GetCardByIndex(c.GetCardIndex());
+            cGUI.SetTableCard(false);
+            cGUI.SetAvalible(true);
+            handGui.PushCard(cGUI);
+        }
+    }
 
     [ClientRpc]
     public void RpcShowCard(int index)
@@ -138,6 +197,12 @@ public class MatchPlayer : NetworkBehaviour
         Debug.Log(handGui + " " + cards.Count);
         handGui.InitHand(cards);
         //Debug.Log(handGui.HandView);
+    }
+
+    [TargetRpc]
+    public void TargetDisableDeck(NetworkConnection conn)
+    {
+        handGui.EnableDeck(false);
     }
 
     public bool SetRelevantCards(Card check_card)
@@ -180,9 +245,6 @@ public class MatchPlayer : NetworkBehaviour
                     relevents_cards_indexs.Add(c.GetCardIndex());
                 }
             }
-
-
-
         }
         TargetSetCardsRelevent(connectionToClient, relevents_cards_indexs);
         return hasRelevent;
@@ -197,7 +259,7 @@ public class MatchPlayer : NetworkBehaviour
     public void TargetSetCardsRelevent(NetworkConnection conn, List<int> indexs)
     {
         //Debug.Log(indexs.Count + "indexs");
-        handGui.SetReleventsCards(MatchController.GetCardsListByIndexs(indexs));
+        handGui.SetAvalibleCards(MatchController.GetCardsListByIndexs(indexs));
     }
 
     public void SetSelectedAsOpenCards()
@@ -253,9 +315,12 @@ public class MatchPlayer : NetworkBehaviour
         int selected_cards_size = selected_cards.Count;
         Card c = cardGUI.card;
 
-        Debug.Log(MatchController.GameState);
-        Debug.Log("size: " + selected_cards.Count);
+        //Debug.Log(MatchController.GameState);
+        //Debug.Log("size: " + selected_cards.Count);
 
+
+        // needs to be change. card should be selected not card gui. card data need to save if card has been selected
+        // needs to be change. card should be selected not card gui. card data need to save if card has been selected
         if (cardGUI.selected)
         {
             //cardGUI.SetSelected(false);

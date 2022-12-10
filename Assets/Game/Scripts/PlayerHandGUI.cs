@@ -110,9 +110,9 @@ public class PlayerHandGUI : MonoBehaviour
         hand_elements.Remove(card);
     }
 
-    public void SetReleventsCards(List<CardGUI> relevent_cards)
+    public void SetAvalibleCards(List<CardGUI> relevent_cards)
     {
-        Debug.Log(hand_elements.Keys.Count);
+        //Debug.Log(hand_elements.Keys.Count);
         foreach (CardGUI card in hand_elements.Keys) 
         {
             card.SetAvalible(true);
@@ -121,9 +121,9 @@ public class PlayerHandGUI : MonoBehaviour
             card.SetAvalible(false);
     }
 
-    public void DisableDeck()
+    public void EnableDeck(bool value)
     {
         foreach(CardGUI card in hand_elements.Keys)
-            card.SetAvalible(false);
+            card.SetAvalible(value);
     }
 }

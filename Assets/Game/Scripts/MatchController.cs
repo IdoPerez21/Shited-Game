@@ -20,17 +20,12 @@ public class MatchController : NetworkBehaviour
     public Dictionary<NetworkConnectionToClient, MatchPlayer> players_connection = new Dictionary<NetworkConnectionToClient, MatchPlayer>();
     //public Dictionary<NetworkIdentity, MatchPlayerData> playersData = new Dictionary<NetworkIdentity, MatchPlayerData>();
 
-    //public List<NetworkIdentity> players = new();
-    //public NetworkIdentity StartingPlayer;
     public KupaGUI kupaGUI;
-
     public PileGUI pileGUI;
     public Deck pile;
 
     public static int players_spawn = 0;
-
     public Button playerReadyBtn;
-    //public NetworkIdentity myPlayer;
 
     public SyncList<MatchPlayer> players = new();
     public MatchPlayer localPlayer;
@@ -102,12 +97,6 @@ public class MatchController : NetworkBehaviour
         //localPlayer.PlayerReady();
     }
 
-    public void OnClickPile()
-    {
-        Debug.Log("make play");
-        //CmdMakePlay();
-    }
-
     [Command(requiresAuthority = false)]
     public void CmdPlayerReady(NetworkConnectionToClient playerConn)
     {
@@ -125,6 +114,12 @@ public class MatchController : NetworkBehaviour
                 break;
             }
         }
+    }
+
+    public void MakePlay()
+    {
+        CmdMakePlay();
+        //localPlayer.handGui.DisableDeck();
     }
 
     [Command(requiresAuthority = false)]
@@ -152,6 +147,13 @@ public class MatchController : NetworkBehaviour
                     Card c = cards[index].card;
                     CardTransaction(currentPlayer, c);
                 }
+                if (kupaGUI.kupa.isEmpty())
+                {
+                    if (currentPlayer.getHand().GetDeckSize() < 7)
+                        currentPlayer.UseOpenCards();
+                    else if (currentPlayer.getHand().GetDeckSize() < 4)
+                        currentPlayer.UseFaceDownCards();
+                }
                 //currentPlayer.selected_cards.Clear();
                 Card topcard = pile.Peak();
                 switch (topcard.getValue())
@@ -165,18 +167,14 @@ public class MatchController : NetworkBehaviour
                         extra_turn = true;
                         //				System.out.println("Pile Before Clear:");
                         pile.clearDeck();
+                        RpcBurnPile();
                         //pilePanel.ClearPanel();
                         currentPlayer.getHand().ClearSelection();
-                        //pilePanel.ShowDeck();
-                        //System.out.println("Pile After Clear:");
-                        //pile.PrintDeck();
-                        //revalidate();
-                        //repaint();
+                        //refresh pile for players
                         SetCurrentPlayer(players.IndexOf(currentPlayer));
                         currentPlayer.SetRelevantCards(new Card(0,0,0));
                         break;
                 }
-
                 if (!extra_turn)
                     NextPlayer();
                 bool isPlayable = true;
@@ -186,11 +184,15 @@ public class MatchController : NetworkBehaviour
                 {
                     Debug.Log("isPlayable: " + isPlayable);
                     //System.out.println(GetCurrentPlayer().getName() + " got the pile: " + pile.AsString());
+                    //currentPlayer.getHand().AddDeck(pile);
+                    Debug.Log("pile: " + pile.GetDeckSize());
+                    RpcPlayerTakePile(currentPlayer, pile.GetDeckIndexs());
                     currentPlayer.getHand().AddDeck(pile);
-                    currentPlayer.SetRelevantCards(new Card(0,0,0));
+                    //pile.clearDeck();
+                    //currentPlayer.SetRelevantCards(new Card(0,0,0));
                     //pilePanel.ShowDeck();
-                    CardTransaction(currentPlayer, currentPlayer.getHand().getLowestCard());
-                    NextPlayer();
+                    //CardTransaction(currentPlayer, currentPlayer.getHand().getLowestCard());
+                    //NextPlayer();
                 }
                 break;
         }
@@ -201,6 +203,25 @@ public class MatchController : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    public void RpcBurnPile()
+    {
+        pileGUI.ClearPile();
+    }
+
+    [ClientRpc]
+    public void RpcStopNextPlayer()
+    {
+        Debug.Log("stop player");
+    }
+
+    [ClientRpc]
+    public void RpcPlayerTakePile(MatchPlayer player, List<int> pile_indexs)
+    {
+        player.TakePile(pile_indexs);
+        pileGUI.pile_cards.Clear();
+    }
+
     private void SetCurrentPlayer(Index current_player_index)
     {
         currentPlayer = players[current_player_index];
@@ -208,6 +229,7 @@ public class MatchController : NetworkBehaviour
     }
     public void NextPlayer()
     {
+        currentPlayer.TargetDisableDeck(currentPlayer.connectionToClient);
         int nextplayer = players.IndexOf(currentPlayer);
         nextplayer++;
         if (nextplayer >= players.Count)
@@ -238,14 +260,15 @@ public class MatchController : NetworkBehaviour
             from_kupa = kupaGUI.GetCardFromKupa().card;
             //trans_string += ", got " + from_kupa.getValue() + " from Kupa.";
             p.playerHand.PushCard(from_kupa);
-            RpcGetCardFromKupa(p, from_kupa.GetCardIndex());
+            p.RpcGetCardFromKupa(from_kupa.GetCardIndex());
+            //RpcGetCardFromKupa(p, from_kupa.GetCardIndex());
         }
         if(p.playerHand.GetDeckSize() == 0)
             GameState = GameStates.GAMEOVER;
         
     }
 
-    //Must work with network connectio nto client
+    //Must work with network connection to client?
     [ClientRpc]
     public void RpcShowCardTransaction(MatchPlayer p, int oldCard_index)
     {
@@ -258,15 +281,6 @@ public class MatchController : NetworkBehaviour
 
         //if (newCard_index != -1)
         //    p.handGui.PushCard(GetCardByIndex(newCard_index));
-    }
-
-    //same
-    [ClientRpc]
-    public void RpcGetCardFromKupa(MatchPlayer p, int index)
-    {
-        Debug.Log(p.handGui);
-        //MatchPlayer p = players_connection[conn.identity.connectionToClient];
-        p.PushCard(cards[index]);
     }
 
     public static CardGUI GetCardByIndex(int index)

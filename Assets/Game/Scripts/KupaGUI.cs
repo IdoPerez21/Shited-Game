@@ -59,7 +59,7 @@ public class KupaGUI : MonoBehaviour
         cardGui.card = card;
         cardGui.SetFaceUpImage(FaceUp_Sprites[index]);
         cardGui.CardPrefab = CardPrefab;
-        cardGui.name = "CardValue" + card.getValue() + "Shape" + card.GetShape();
+        //cardGui.name = "CardValue" + card.getValue() + "Shape" + card.GetShape();
         cardGui.SetActive(false);
         return cardGui;
     }
